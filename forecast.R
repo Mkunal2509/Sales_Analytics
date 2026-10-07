@@ -1,3 +1,9 @@
+# Add local library path if it exists
+user_lib <- file.path(getwd(), "R_libs")
+if (dir.exists(user_lib)) {
+  .libPaths(c(user_lib, .libPaths()))
+}
+
 suppressPackageStartupMessages({
   library(forecast)
 })
