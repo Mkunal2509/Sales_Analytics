@@ -4,9 +4,12 @@ if (dir.exists(user_lib)) {
   .libPaths(c(user_lib, .libPaths()))
 }
 
-suppressPackageStartupMessages({
+# Completely suppress startup messages, warnings, and library verbosity
+suppressPackageStartupMessages(suppressWarnings({
+  library(zoo)
+  library(quantmod)
   library(forecast)
-})
+}))
 
 args <- commandArgs(trailingOnly = TRUE)
 input_file <- ifelse(length(args) > 0, args[1], "temp_daily_sales.csv")
