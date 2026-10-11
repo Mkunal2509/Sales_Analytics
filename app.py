@@ -40,3 +40,25 @@ def find_rscript_path():
             return path
             
     return "Rscript"
+
+    @st.cache_data
+def load_and_clean_data():
+    # Downcast datatypes to keep RAM well under Streamlit's 1 GB limit
+    dtypes = {
+        'Invoice': 'str',
+        'StockCode': 'str',
+        'Description': 'str',
+        'Quantity': 'int32',
+        'Price': 'float32',
+        'Customer ID': 'float32',
+        'Country': 'category'
+    }
+    df = pd.read_csv('online_retail_II.csv', dtype=dtypes, encoding='ISO-8859-1')
+    
+    # Drop rows without Customer ID & filter cancellations early
+    df = df.dropna(subset=['Customer ID'])
+    df = df[~df['Invoice'].astype(str).str.startswith('C')]
+    df = df[(df['Quantity'] > 0) & (df['Price'] > 0)]
+    df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
+    df['Revenue'] = df['Quantity'] * df['Price']
+    return df
